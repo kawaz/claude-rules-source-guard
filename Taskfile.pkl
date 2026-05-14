@@ -1,0 +1,99 @@
+/// claude-rules-source-guard Taskfile (pkfire).
+///
+/// shell + JSON manifest だけの軽量プラグイン。
+amends "package://pkg.pkl-lang.org/github.com/mizchi/pkfire/pkfire@0.10.0#/Taskfile.pkl"
+
+import "package://pkg.pkl-lang.org/github.com/kawaz/pkf-tasks/pkf-tasks@3.0.2#/all.pkl" as kawaz
+
+local lintShell: Task = new {
+  name = "lint:shell"
+  description = "bash -n on hooks/*.sh"
+  visibility = "internal"
+  inputs { "hooks/*.sh" }
+  cmd =
+    """
+    set -euo pipefail
+    for f in hooks/*.sh; do
+      [ -f "$f" ] || continue
+      bash -n "$f"
+    done
+    """
+}
+
+local lintJson: Task = new {
+  name = "lint:json"
+  description = "jq . on plugin/marketplace/hooks manifests"
+  visibility = "internal"
+  inputs {
+    ".claude-plugin/*.json"
+    "hooks/*.json"
+  }
+  cmd =
+    """
+    set -euo pipefail
+    for f in .claude-plugin/*.json hooks/*.json; do
+      [ -f "$f" ] || continue
+      jq . "$f" > /dev/null
+    done
+    """
+}
+
+local lintPkl: Task = new {
+  name = "lint:pkl"
+  description = "pkl format -w"
+  visibility = "internal"
+  inputs {
+    "**/*.pkl"
+    "**/PklProject"
+    "**/PklProject.deps.json"
+  }
+  cmd =
+    """
+    set -euo pipefail
+    pkl format -w . >/dev/null
+    """
+}
+
+local lint: Task = new {
+  name = "lint"
+  description = "shell + json + pkl"
+  cache = false
+  deps { lintShell; lintJson; lintPkl }
+}
+
+local push: Task = (kawaz.vcs.push) {
+  name = "push"
+  description = "push with lint + migration check"
+  deps {
+    lint
+    kawaz.migrate.checkPkfTasks
+    kawaz.migrate.checkPkfire
+  }
+}
+
+local list: Task = new {
+  name = "list"
+  description = "list recipes"
+  cache = false
+  quiet = true
+  cmd = "pkf list --unsorted"
+}
+
+local default: Task = new {
+  name = "default"
+  description = "default is list"
+  cache = false
+  deps { list }
+}
+
+tasks {
+  default
+  list
+  push
+  lint
+  lintShell
+  lintJson
+  lintPkl
+  ...kawaz.vcs.tasks
+  ...kawaz.migrate.tasks
+}

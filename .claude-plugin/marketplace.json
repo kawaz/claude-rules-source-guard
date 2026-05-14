@@ -1,0 +1,18 @@
+{
+  "name": "claude-rules-source-guard",
+  "owner": {
+    "name": "kawaz"
+  },
+  "metadata": {
+    "description": "Block direct Write/Edit to ~/.claude/rules/ and route changes through the source-of-truth claude-rules repo.",
+    "version": "0.1.0",
+    "license": "MIT"
+  },
+  "plugins": [
+    {
+      "name": "claude-rules-source-guard",
+      "description": "PreToolUse(Write|Edit) hook that blocks edits under ~/.claude/rules/ (managed as directory symlinks from kawaz/claude-rules{,-emeradaco,-zunsystem,-syun}). Reports the resolved source path so edits go to the repo, not the symlink target.",
+      "source": "./"
+    }
+  ]
+}
