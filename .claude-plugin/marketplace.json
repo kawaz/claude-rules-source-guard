@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Block direct Write/Edit to ~/.claude/rules/ and route changes through the source-of-truth claude-rules repo.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "MIT"
   },
   "plugins": [

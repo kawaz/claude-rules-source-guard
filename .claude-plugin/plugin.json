@@ -1,7 +1,7 @@
 {
   "name": "claude-rules-source-guard",
   "description": "Block direct Write/Edit to ~/.claude/rules/ (managed via symlinks from claude-rules repos) and point to the source-of-truth repo path.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "kawaz" },
   "license": "MIT",
   "repository": "https://github.com/kawaz/claude-rules-source-guard"

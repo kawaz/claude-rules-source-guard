@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 (2026-05-14)
+
+- fix: hook が `~/.claude/rules` をハードコード参照していたのを `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/rules` に変更。kawaz の personal/emeradaco 分離環境 (~/.claude-personal, ~/.claude-emeradaco) で正しくブロックされるように
+
 ## 0.1.0 (2026-05-14)
 
 初版。
