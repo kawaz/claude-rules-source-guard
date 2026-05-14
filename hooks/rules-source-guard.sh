@@ -1,12 +1,16 @@
 #!/bin/bash
-# PreToolUse(Write|Edit) hook: ~/.claude/rules/ 配下への直接編集をブロック。
+# PreToolUse(Write|Edit) hook: $CLAUDE_CONFIG_DIR/rules/ 配下への直接編集をブロック。
 #
-# このディレクトリは kawaz/claude-rules 系リポからのディレクトリ symlink で
+# rules/ ディレクトリは claude-rules-* 系リポからのディレクトリ symlink で
 # 構成されており、直編集だとリポ管理外で変更が混入する。block して、
 # リポ側で作業するよう案内する。
 #
 # NOTE: `set -e` は使わない。フック自体の不具合 (jq 不在、JSON 不正等) は
 # 通過 (exit 0) させて、ユーザの作業を巻き込まないこと。
+
+# CLAUDE_CONFIG_DIR が未設定なら従来の ~/.claude を見る (後方互換)
+config_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+rules_dir="$config_dir/rules"
 
 input=$(cat)
 file_path=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null) || exit 0
@@ -18,9 +22,9 @@ case "$file_path" in
   *) exit 0 ;;
 esac
 
-# ~/.claude/rules/ 配下かどうか (HOME 展開)
+# $CLAUDE_CONFIG_DIR/rules/ 配下かどうか
 case "$file_path" in
-  "$HOME/.claude/rules"/*) ;;
+  "$rules_dir"/*) ;;
   *) exit 0 ;;
 esac
 
@@ -28,21 +32,16 @@ esac
 real_path=$(readlink -f "$file_path" 2>/dev/null || echo "$file_path")
 
 cat >&2 <<EOF
-BLOCK: \`~/.claude/rules/\` 配下への直接編集はできません。
+BLOCK: \`${rules_dir}/\` 配下への直接編集はできません。
 
-このディレクトリは claude-rules 系リポからのディレクトリ symlink で
+このディレクトリは claude-rules-* 系リポからのディレクトリ symlink で
 構成されており、直編集だとリポ管理外で変更が混入します。
 
 該当ファイルの実体パス:
   ${real_path}
 
-ルール変更は実体のあるリポ側で作業してください:
-  ~/.dotfiles/local/share/repos/github.com/kawaz/claude-rules/
-  ~/.dotfiles/local/share/repos/github.com/kawaz/claude-rules-zunsystem/
-  ~/.dotfiles/local/share/repos/github.com/kawaz/claude-rules-syun/
-  ~/.dotfiles/local/share/repos/github.com/kawaz123/claude-rules-emeradaco/
-
+ルール変更は実体のあるリポ側 (上記実体パスのリポ) で作業してください。
 リポ側で編集後、jj describe + commit + \`pkf run push\` で反映されます。
-ディレクトリ symlink 構成なので install.sh の再実行は不要です。
+ディレクトリ symlink 構成なので setup.sh の再実行は不要です。
 EOF
 exit 2

@@ -3,7 +3,7 @@
 /// shell + JSON manifest だけの軽量プラグイン。
 amends "package://pkg.pkl-lang.org/github.com/mizchi/pkfire/pkfire@0.10.0#/Taskfile.pkl"
 
-import "package://pkg.pkl-lang.org/github.com/kawaz/pkf-tasks/pkf-tasks@3.0.2#/all.pkl" as kawaz
+import "package://pkg.pkl-lang.org/github.com/kawaz/pkf-tasks/pkf-tasks@3.0.3#/all.pkl" as kawaz
 
 local lintShell: Task = new {
   name = "lint:shell"
