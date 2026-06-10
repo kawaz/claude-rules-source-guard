@@ -4,8 +4,8 @@
     "name": "kawaz"
   },
   "metadata": {
-    "description": "Block direct Write/Edit to ~/.claude/rules/ and route changes through the source-of-truth claude-rules repo.",
-    "version": "0.1.1",
+    "description": "Block direct Write/Edit/MultiEdit to ~/.claude/rules/ and route changes through the source-of-truth claude-rules repo.",
+    "version": "0.1.2",
     "license": "MIT"
   },
   "plugins": [

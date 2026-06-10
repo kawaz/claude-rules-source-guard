@@ -7,13 +7,16 @@ import "package://pkg.pkl-lang.org/github.com/kawaz/pkf-tasks/pkf-tasks@3.0.3#/a
 
 local lintShell: Task = new {
   name = "lint:shell"
-  description = "bash -n on hooks/*.sh"
+  description = "bash -n on hooks/*.sh and tests/*.sh"
   visibility = "internal"
-  inputs { "hooks/*.sh" }
+  inputs {
+    "hooks/*.sh"
+    "tests/*.sh"
+  }
   cmd =
     """
     set -euo pipefail
-    for f in hooks/*.sh; do
+    for f in hooks/*.sh tests/*.sh; do
       [ -f "$f" ] || continue
       bash -n "$f"
     done
@@ -61,11 +64,22 @@ local lint: Task = new {
   deps { lintShell; lintJson; lintPkl }
 }
 
+local test: Task = new {
+  name = "test"
+  description = "rules-source-guard.sh integration test"
+  inputs {
+    "hooks/*.sh"
+    "tests/*.sh"
+  }
+  cmd = "bash tests/rules-source-guard.test.sh"
+}
+
 local push: Task = (kawaz.vcs.push) {
   name = "push"
-  description = "push with lint + migration check"
+  description = "push with lint + test + migration check"
   deps {
     lint
+    test
     kawaz.migrate.checkPkfTasks
     kawaz.migrate.checkPkfire
   }
@@ -91,6 +105,7 @@ tasks {
   list
   push
   lint
+  test
   lintShell
   lintJson
   lintPkl

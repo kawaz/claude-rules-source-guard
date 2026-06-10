@@ -1,5 +1,8 @@
 #!/bin/bash
-# PreToolUse(Write|Edit) hook: $CLAUDE_CONFIG_DIR/rules/ 配下への直接編集をブロック。
+# PreToolUse(Write|Edit|MultiEdit) hook: $CLAUDE_CONFIG_DIR/rules/ 配下への直接編集をブロック。
+#
+# Write / Edit / MultiEdit はいずれも tool_input.file_path をトップレベルに持つため
+# (MultiEdit の edits[] は判定に不要)、file_path のみで判定すれば全ツールを覆える。
 #
 # rules/ ディレクトリは claude-rules-* 系リポからのディレクトリ symlink で
 # 構成されており、直編集だとリポ管理外で変更が混入する。block して、

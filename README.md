@@ -1,7 +1,7 @@
 # claude-rules-source-guard
 
-Claude Code plugin: `PreToolUse(Write|Edit)` hook that blocks direct edits
-under `~/.claude/rules/` and routes changes through the source-of-truth
+Claude Code plugin: `PreToolUse(Write|Edit|MultiEdit)` hook that blocks direct
+edits under `~/.claude/rules/` and routes changes through the source-of-truth
 [claude-rules](https://github.com/kawaz/claude-rules) repo.
 
 ## Why
@@ -23,7 +23,7 @@ resolved repo path so the model knows where to actually go.
 
 ## Behavior
 
-- Triggers on `Write` / `Edit` whose `file_path` is under `$HOME/.claude/rules/`.
+- Triggers on `Write` / `Edit` / `MultiEdit` whose `file_path` is under `$HOME/.claude/rules/`. All three tools carry `file_path` at the top level of `tool_input`, so the same check covers them.
 - Resolves the symlink target with `readlink -f` and includes it in the block message.
 - Pass-through (exit 0) for all other paths and for relative paths.
 

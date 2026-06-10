@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 (2026-06-10)
+
+- feat: `MultiEdit` を matcher に追加。MultiEdit 経由の `~/.claude/rules/` 配下編集もブロック対象になる (Write/Edit/MultiEdit はいずれも `tool_input.file_path` をトップレベルに持つため同一判定で覆える)
+- test: `tests/rules-source-guard.test.sh` を新設。Write/Edit/MultiEdit の block/pass、相対パス・fail-open を網羅。`pkf run test` で実行
+
 ## 0.1.1 (2026-05-14)
 
 - fix: hook が `~/.claude/rules` をハードコード参照していたのを `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/rules` に変更。kawaz の personal/emeradaco 分離環境 (~/.claude-personal, ~/.claude-emeradaco) で正しくブロックされるように
